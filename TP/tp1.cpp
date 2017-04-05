@@ -3,19 +3,37 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <cmath>
 using namespace std;
 
 int equipos; // La declaro global para poder usarla en las demas funciones
+
+bool isZero(double value){
+	return (abs(value) <= 1.0e-16);
+}
+
+void backward_substitution(vector< vector<double> > &matriz, double r[]){
+	for (int i = equipos - 1; i >= 0; i--){
+		r[i] = matriz[i][equipos];			// r_i = b_i
+		for (int j = equipos - 1; j >= i + 1; j--)
+			r[i] -= matriz[i][j] * r[j];
+		r[i] = r[i] / matriz[i][i];
+	}
+}
 
 void eg(vector< vector<double> > &matriz, double r[]){
 	//Eliminacion Gaussiana
 	for(int k = 0; k < equipos - 1; k++){
 		for(int i = k + 1; i < equipos; i++){
 				double m = matriz[i][k] / matriz[k][k];
-				for(int j = k; j < equipos + 1; j++)
+				for(int j = k; j < equipos + 1; j++){	
 					matriz[i][j] -= m * matriz[k][j];
+					if (isZero(matriz[i][j]))
+						matriz[i][j] = 0.0;
+				}
 		}
 	}
+	backward_substitution(matriz, r);
 }
 
 void cl(vector< vector<double> > &matriz, double r[]){
@@ -57,14 +75,18 @@ vector<string> split(const string &s, char delim) {
 }
 
 int main (int args, char* argsv[]) {
+	if (args < 4){
+		cout << "Argumentos inválidos (archivo_entrada archivo_salida 0/1/2)" << "\n";
+		return 1;
+	}
+
 	ifstream entrada;
 	entrada.open(argsv[1]);
 	string cabecera;
 	getline(entrada, cabecera);	// La primera linea contiene la cantidad de equipos y partidos
 	vector<string> tamanio = split(cabecera, ' ');
 
-	//char modo = stoi(argsv[3]); // 0 EG, 1 CL, 2 WP
-	char modo = 0;
+	char modo = stoi(argsv[3]); // 0 EG, 1 CL, 2 WP
 
 	equipos = stoi(tamanio[0]);
 	int partidos = stoi(tamanio[1]);
@@ -133,14 +155,15 @@ int main (int args, char* argsv[]) {
 	//MEDIR_TIEMPO(END)
 
 	// Los arreglos se pasan como punteros, r contiene el resultado
-	// ofstream salida;
-	// salida.open(argsv[2]);
-	// // Se respeta el orden de los equipos en el archivo de salida
-	// for (j = 0; j < equipos; j++)
-	// 	salida << to_string(r[j]) << "\n";
-	// salida.close();
+	ofstream salida;
+	salida.open(argsv[2]);
+	// Se respeta el orden de los equipos en el archivo de salida
+	for (int j = 0; j < equipos; j++)
+		salida << to_string(r[j]) << "\n";
+	salida.close();
 
-	imprimir(matriz);
+	if (modo != 2)
+		imprimir(matriz);
 
 	return 0;
 }
