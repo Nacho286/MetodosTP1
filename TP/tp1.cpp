@@ -4,6 +4,7 @@
 #include <sstream>
 #include <vector>
 #include <cmath>
+#include "SparseMatrix.h"
 using namespace std;
 
 int equipos; // La declaro global para poder usarla en las demas funciones
@@ -23,6 +24,7 @@ void backward_substitution(vector< vector<double> > &matriz, double r[]){
 
 void eg(vector< vector<double> > &matriz, double r[]){
 	//Eliminacion Gaussiana
+
 	for(int k = 0; k < equipos - 1; k++){
 		for(int i = k + 1; i < equipos; i++){
 				double m = matriz[i][k] / matriz[k][k];
@@ -146,24 +148,31 @@ int main (int args, char* argsv[]) {
 	entrada.close();
 
 	//MEDIR_TIEMPO(START)
-	if (modo == 0)
-		eg(matriz, r);
-	else if (modo == 1)
-		cl(matriz, r);
-	else
-		wp(total, r);
-	//MEDIR_TIEMPO(END)
 
-	// Los arreglos se pasan como punteros, r contiene el resultado
-	ofstream salida;
-	salida.open(argsv[2]);
-	// Se respeta el orden de los equipos en el archivo de salida
-	for (int j = 0; j < equipos; j++)
-		salida << to_string(r[j]) << "\n";
-	salida.close();
+	
+	SparseMatrix m = SparseMatrix(matriz, equipos);
+	m.show();
+	// if (modo == 0)
+	// 	eg(matriz, r);
+	// else if (modo == 1)
+	// 	cl(matriz, r);
+	// else
+	// 	wp(total, r);
+	// //MEDIR_TIEMPO(END)
 
-	if (modo != 2)
-		imprimir(matriz);
+
+	// // Los arreglos se pasan como punteros, r contiene el resultado
+	// ofstream salida;
+	// salida.open(argsv[2]);
+	// // Se respeta el orden de los equipos en el archivo de salida
+	// for (int j = 0; j < equipos; j++)
+	// 	salida << to_string(r[j]) << "\n";
+	// salida.close();
+
+	// if (modo != 2)
+	 	imprimir(matriz);
+	// //matriz.~vector();
+	//delete matriz;
 
 	return 0;
 }

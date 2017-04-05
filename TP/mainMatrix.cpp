@@ -37,6 +37,11 @@ public:
 
 	}
 
+	// ~SparseMatrix(){
+	// 	delete m;
+	// 	cout << "borro";
+
+	// }
 	int getSize(){
 	    return size;
 	}
@@ -91,6 +96,9 @@ public:
 	}
 
 	//Resta fila lowerRow - m*pivotRow
+	int getFirst(int row){
+		return m[row].front().value;
+	}
 
 	void rowSub(int pivotRow, int lowerRow, double k){
 
@@ -165,6 +173,7 @@ int main()
 	        matrix[i][j] = a[i][j];  
 	    }
 	}
+	
 	SparseMatrix m = SparseMatrix(matrix);
 
     std::cout << "mylist contains:"<<endl;
