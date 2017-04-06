@@ -4,7 +4,7 @@
 #include <sstream>
 #include <vector>
 #include <cmath>
-#include "SparseMatrix.h"
+//#include "SparseMatrix.h"
 using namespace std;
 
 int equipos; // La declaro global para poder usarla en las demas funciones
@@ -28,7 +28,7 @@ void eg(vector< vector<double> > &matriz, double r[]){
 	for(int k = 0; k < equipos - 1; k++){
 		for(int i = k + 1; i < equipos; i++){
 				double m = matriz[i][k] / matriz[k][k];
-				for(int j = k; j < equipos + 1; j++){	
+				for(int j = k; j < equipos + 1; j++){
 					matriz[i][j] -= m * matriz[k][j];
 					if (isZero(matriz[i][j]))
 						matriz[i][j] = 0.0;
@@ -40,6 +40,26 @@ void eg(vector< vector<double> > &matriz, double r[]){
 
 void cl(vector< vector<double> > &matriz, double r[]){
 	//Cholesky
+	matriz[0][0]=pow(matriz[0][0],1/2);
+	for(int i=1;i<equipos;i++){
+        matriz[i][0]=matriz[i][0]/matriz[0][0];
+	}
+	for(int i=1;i<equipos-1;i++){
+        for(int j=0;j<i;i++){{
+            matriz[i][i]=-pow(matriz[i][j],2);
+        }
+        matriz[i][i]=pow(matriz[i][i],1/2);
+        for(int j=i+1;j<equipos;j++){
+            for(int k=0;k<i;k++){
+                matriz[j][i]=-(matriz[j][k]*matriz[i][k]);
+            }
+            matriz[j][i]=matriz[j][i]/matriz[i][i];
+        }
+	}
+	for(int i=0;i<equipos-1;i++){
+        matriz[equipos-1][equipos-1]=-pow(matriz[equipos-1][i],2);
+	}
+	matriz[equipos-1][equipos-1]=pow(matriz[equipos-1][equipos-1],1/2);
 }
 
 void wp(double total[], double r[]){
@@ -127,7 +147,7 @@ int main (int args, char* argsv[]) {
 
 			//Dejo el caso de empate por si surge en nuestros tests generados automáticamente
 			//Esos tests son de mediciones de tiempo, asi que no importa quien quede como ganador
-			if (resultado_1 >= resultado_2){		
+			if (resultado_1 >= resultado_2){
 				matriz[equipo_1 - 1][equipos] += 1.0/2.0;
 				matriz[equipo_2 - 1][equipos] -= 1.0/2.0;
 			}else{
@@ -149,7 +169,7 @@ int main (int args, char* argsv[]) {
 
 	//MEDIR_TIEMPO(START)
 
-	
+
 	SparseMatrix m = SparseMatrix(matriz, equipos);
 	m.show();
 	// if (modo == 0)
