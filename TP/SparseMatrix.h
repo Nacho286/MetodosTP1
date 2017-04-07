@@ -18,24 +18,28 @@ private:
 		int pos;
 	};
 
-	std::vector<std::list<node> > m;
+	vector<list<node> > m;
 	
 	int size; // sin tener en cuenta la columna del b
 
 public:
 
+	SparseMatrix(vector<vector<double> > a, int dim);
+	//~SparseMatrix(void);
 
-	SparseMatrix(std::vector<std::vector<double> > a, int dim);
-	int getSize();
 	void show();
 	void scalarMult(double a);
-	void ScalarRowMult(double a, int row);
-	int getFirstPos(int row);
-	double getFirstVal(int row);
-	int getLastPos(int row);
-	double getLastVal(int row);
+	void scalarRowMult(double a, int row);
 	void rowSub(int pivotRow, int lowerRow, double k);
+
+	int getSize();
+	int getFirstPos(int row);
+	int getLastPos(int row);
+	double getFirstVal(int row);
+	double getLastVal(int row);
+
 	bool isZero(double k);
+
 	void eg(double r[]);
 	void backward_substitution(double r[]);
 

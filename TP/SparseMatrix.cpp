@@ -7,28 +7,37 @@
 using namespace std;
 
 	
-	SparseMatrix::SparseMatrix(std::vector<std::vector<double> > a, int dim) {
-	    for(int i = 0; i< dim; i++){
-	        std::list<node>row;
-	        for(int j=0; j< dim+1; j++){
+	SparseMatrix::SparseMatrix(vector<vector<double> > a, int dim){
+	    for(int i = 0; i < dim; i++){
+	        list<node> row;
+	        for(int j = 0; j < dim + 1; j++){
 	            if(!isZero(a[i][j])){
-	            	node * n = new node;
-	            	n->value = a[i][j];
-	            	n->pos = j;
-	                row.push_back(*n);
+	            	// node *n = new node;
+	            	// n->value = a[i][j];
+	            	// n->pos = j;
+	             	// row.push_back(*n);
+	             	node n = node();
+	             	n.value = a[i][j];
+	             	n.pos = j;
+	             	row.push_back(n);
 	            }    
 	        }
 	        m.push_back(row);
 	    }
 	    size = dim;
-
 	}
 
-	// ~SparseMatrix(){
-	// 	delete m;
-	// 	cout << "borro";
-
+	// SparseMatrix::~SparseMatrix(){
+	// 	for(int i = 0; i < size; i++){
+	// 		list<node>::iterator itRow = m[i].begin();
+	// 		while(itRow != m[i].end()){
+	// 			delete &(itRow);
+	// 			itRow++;
+	// 		}
+	// 		m[i].clear();
+	// 	}
 	// }
+
 	int SparseMatrix::getSize(){
 	    return size;
 	}
@@ -36,19 +45,16 @@ using namespace std;
 	//Imprime la matriz
 	void SparseMatrix::show(){
 
-		for(int i = 0; i< size; i++){
+		for(int i = 0; i < size; i++){
 	        list<node>::iterator row = m[i].begin();
-	        for(int j=0; j< size+1; j++){
-
+	        for(int j = 0; j < size + 1; j++){
 	            if(row->pos == j){
 	            	cout << ' ' << row->value;
 	            	++row;
-	            }
-	            else
-	            	cout << ' ' << 0;
-	               
+	            } else
+	            	cout << ' ' << 0; 
 	        }
-	      cout << endl;
+	      	cout << endl;
 	    }
 	    cout << endl;
 	}
@@ -65,16 +71,18 @@ using namespace std;
 	}
 
 	//Multiplica la fila row de m por el escalar a 
-	void SparseMatrix::ScalarRowMult(double a, int row){
+	void SparseMatrix::scalarRowMult(double a, int row){
 		list<node>::iterator itRow;
 		for (itRow = m[row].begin(); itRow != m[row].end(); itRow++)
-			itRow->value = itRow->value * a ;
-		
+			itRow->value = itRow->value * a ;		
 	}
 
-	//Resta fila lowerRow - m*pivotRow
 	int SparseMatrix::getFirstPos(int row){
 		return m[row].front().pos;
+	}
+
+	int SparseMatrix::getLastPos(int row){
+		return m[row].back().pos;
 	}
 
 	double SparseMatrix::getFirstVal(int row){
@@ -84,13 +92,8 @@ using namespace std;
 	double SparseMatrix::getLastVal(int row){
 		return m[row].back().value;
 	}
-	int SparseMatrix::getLastPos(int row){
-		return m[row].back().pos;
-	}
 
-
-
-
+	//Resta fila lowerRow - k*pivotRow
 	void SparseMatrix::rowSub(int pivotRow, int lowerRow, double k){
 
 		//se copia la fila
@@ -101,36 +104,46 @@ using namespace std;
 		list<node>::iterator itLowerRow = m[lowerRow].begin();
 
 		while(itPivotRow != lpivotRow.end() && itLowerRow != m[lowerRow].end()){
-			if (itPivotRow->pos ==  itLowerRow->pos){
-				itLowerRow->value -= (k*itPivotRow->value);
+			if (itLowerRow->pos == itPivotRow->pos){
+				itLowerRow->value -= (k * itPivotRow->value);
 
-				if(isZero(itLowerRow->value))
+				if(isZero(itLowerRow->value)){
+					//node* n = &(*itLowerRow);
 					itLowerRow = m[lowerRow].erase(itLowerRow);
-				else
+					//delete n;
+				} else
 					++itLowerRow;
             	++itPivotRow;
-			}
-        	else if (itLowerRow->pos > itPivotRow->pos){
-        		node * n = new node;
-	            n->value = -k*(itPivotRow->value);
-	            n->pos = itPivotRow->pos;
-        		m[lowerRow].insert(itLowerRow,*n);
+			} else if (itLowerRow->pos > itPivotRow->pos){
+        		// node *n = new node;
+	         	// n->value = -k * (itPivotRow->value);
+	         	// n->pos = itPivotRow->pos;
+        		// m[lowerRow].insert(itLowerRow,*n);
+        		node n = node();
+	            n.value = -k * (itPivotRow->value);
+	            n.pos = itPivotRow->pos;
+        		m[lowerRow].insert(itLowerRow, n);
+
         		++itPivotRow;
-        	}
-        	else
+        	} else
         		++itLowerRow;
 		}
     	
+    	//Si termine de recorrer la fila a restar (lowerRow) y quedaron elementos en pivotRow, los agrego.
    		while(itPivotRow != lpivotRow.end()){
-   			node * n = new node;
-	        n->value = -k*(itPivotRow->value);
-	        n->pos = itPivotRow->pos;
-        	m[lowerRow].insert(itLowerRow,*n);
+   			// node * n = new node;
+	     	// n->value = -k * (itPivotRow->value);
+	     	// n->pos = itPivotRow->pos;
+      		// m[lowerRow].insert(itLowerRow,*n);
+   			node n = node();
+	        n.value = -k * (itPivotRow->value);
+	        n.pos = itPivotRow->pos;
+        	m[lowerRow].insert(itLowerRow, n);
+
         	++itPivotRow;
      	}
  
 	}
-
 
 	void SparseMatrix::backward_substitution(double r[]){
 		for (int i = size - 1; i >= 0; i--){
@@ -162,7 +175,7 @@ using namespace std;
 	
 
 	bool SparseMatrix::isZero(double k){
-		return (fabs(k) <= 1.0e-5);	
+		return (fabs(k) <= 1.0e-16);	
 
 	}
 	
