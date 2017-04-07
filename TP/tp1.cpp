@@ -11,13 +11,22 @@ using namespace std;
 int equipos; // La declaro global para poder usarla en las demas funciones
 
 bool isZero(double value){
-	return (abs(value) <= 1.0e-16);
+	return (abs(value) <= 1.0e-7);
 }
 
 void backward_substitution(vector< vector<double> > &matriz, double r[]){
 	for (int i = equipos - 1; i >= 0; i--){
 		r[i] = matriz[i][equipos];			// r_i = b_i
 		for (int j = equipos - 1; j >= i + 1; j--)
+			r[i] -= matriz[i][j] * r[j];
+		r[i] = r[i] / matriz[i][i];
+	}
+}
+
+void forward_substitution(vector< vector<double> > &matriz, double r[]){
+	for (int i =0; i < equipos; i++){
+		r[i] = matriz[i][equipos];			// r_i = b_i
+		for (int j = 0; j < i ; j++)
 			r[i] -= matriz[i][j] * r[j];
 		r[i] = r[i] / matriz[i][i];
 	}
@@ -38,28 +47,43 @@ void eg(vector< vector<double> > &matriz, double r[]){
 	backward_substitution(matriz, r);
 }
 
-void cl(vector< vector<double> > &matriz, double r[]){
+void cl(vector< vector<double> > &matriz){
 	//Cholesky
-	matriz[0][0]=pow(matriz[0][0],1/2);
+	matriz[0][0]=pow(matriz[0][0],1.0/2.0);
 	for(int i=1;i<equipos;i++){
         matriz[i][0]=matriz[i][0]/matriz[0][0];
 	}
 	for(int i=1;i<equipos-1;i++){
-        for(int j=0;j<i;i++){
-            matriz[i][i]=-pow(matriz[i][j],2);
+        for(int j=0;j<i;j++){
+            matriz[i][i]-=pow(matriz[i][j],2);
+
         }
-        matriz[i][i]=pow(matriz[i][i],1/2);
+        matriz[i][i]=pow(matriz[i][i],1.0/2.0);
         for(int j=i+1;j<equipos;j++){
             for(int k=0;k<i;k++){
-                matriz[j][i]=-(matriz[j][k]*matriz[i][k]);
+                matriz[j][i]-=(matriz[j][k]*matriz[i][k]);
             }
             matriz[j][i]=matriz[j][i]/matriz[i][i];
         }
 	}
 	for(int i=0;i<equipos-1;i++){
-        matriz[equipos-1][equipos-1]=-pow(matriz[equipos-1][i],2);
+        matriz[equipos-1][equipos-1]-=pow(matriz[equipos-1][i],2);
 	}
-	matriz[equipos-1][equipos-1]=pow(matriz[equipos-1][equipos-1],1/2);
+	matriz[equipos-1][equipos-1]=pow(matriz[equipos-1][equipos-1],1.0/2.0);
+	for(int i=0;i<equipos;i++){
+		for(int j=0;j<equipos;j++){
+			matriz[i][j]=matriz[j][i];
+		}
+	}
+}
+
+
+void solve_cl(vector< vector<double> > &matriz, double r[]){
+	forward_substitution(matriz,r);
+	for(int i=0;i<equipos;i++){
+		matriz[i][equipos]=r[i];
+	}
+	backward_substitution(matriz,r);
 }
 
 void wp(double total[], double r[]){
@@ -220,15 +244,17 @@ int main (int args, char* argsv[]) {
 		MEDIR_TIEMPO_START(start)
 		if (modo == 0)
 			rala.eg(r);		// eg(matriz, r);
-		else if (modo == 1)
-			cl(matriz, r);
+		else if (modo == 1){
+			cl(matriz);
+			solve_cl(matriz,r);
+		}
 		else
 			wp(total, r);
 		MEDIR_TIEMPO_STOP(end)
 		resultados[k] = end - start;
 		res += end - start;
 	}
-
+	
 	if (iteraciones > 1)
 		procesar_mediciones(resultados, res, iteraciones);
 

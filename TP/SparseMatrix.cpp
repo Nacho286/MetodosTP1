@@ -8,6 +8,8 @@ using namespace std;
 
 	
 	SparseMatrix::SparseMatrix(vector<vector<double> > a, int dim){
+	   
+	
 	    for(int i = 0; i < dim; i++){
 	        list<node> row;
 	        for(int j = 0; j < dim + 1; j++){
@@ -162,6 +164,24 @@ using namespace std;
 			r[i] = r[i] / it->value;
 		}
 	}
+	
+	void SparseMatrix::forward_substitution(double r[]){
+		for (int i = 0; i < size ; i++){
+			if(getLastPos(i)!= size)
+				r[i] = 0;
+			else
+				r[i] = getLastVal(i);	
+			
+			list<node>::iterator it = m[i].begin();
+			
+			while(it->pos != i){
+				r[i] -= it->value * r[it->pos];
+				++it;
+			}
+			
+			r[i] = r[i] / it->value;
+		}
+	}
 
 	void SparseMatrix::eg(double r[]){
 		for(int k = 0; k < size - 1; k++)
@@ -173,10 +193,13 @@ using namespace std;
 		backward_substitution(r);
 	}
 	
+	void SparseMatrix::cl(){
+			
+	}
+	
 
 	bool SparseMatrix::isZero(double k){
-		return (fabs(k) <= 1.0e-16);	
-
+		return (fabs(k) <= 1.0e-7);	
 	}
 	
 

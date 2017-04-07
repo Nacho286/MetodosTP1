@@ -41,7 +41,9 @@ public:
 	bool isZero(double k);
 
 	void eg(double r[]);
+	void cl();
 	void backward_substitution(double r[]);
+	void forward_substitution(double r[]);
 
 };
 
