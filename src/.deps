@@ -1,0 +1,22 @@
+{
+    ".deps_version": 2, 
+    "g++ -o ./tp ./tp1.o ./SparseMatrix.o": {
+        ".": "input-5058f1af8388633f609cadb75a75dc9d", 
+        "SparseMatrix.o": "input-3923089cff4135b471bba6d27abcc8a1", 
+        "tp": "output-0e174e43fbe78704f8916279dad09ccc", 
+        "tp1.o": "input-13a99adfe781464802ff6c2233bc5680"
+    }, 
+    "g++ -std=c++11 -O2 -c ./SparseMatrix.cpp -o ./SparseMatrix.o": {
+        ".": "input-5058f1af8388633f609cadb75a75dc9d", 
+        "SparseMatrix.cpp": "input-313c1537aab0d2069cea188cf6798679", 
+        "SparseMatrix.h": "input-fb81c43f07d6a30ebce7e0fe65f03b2b", 
+        "SparseMatrix.o": "output-3923089cff4135b471bba6d27abcc8a1"
+    }, 
+    "g++ -std=c++11 -O2 -c ./tp1.cpp -o ./tp1.o": {
+        ".": "input-5058f1af8388633f609cadb75a75dc9d", 
+        "SparseMatrix.h": "input-fb81c43f07d6a30ebce7e0fe65f03b2b", 
+        "tiempo.h": "input-b8b46991e195a68b8f6af11cb6e944bf", 
+        "tp1.cpp": "input-6ab80806bd8dfc5f7a8cbe3dfc9e5128", 
+        "tp1.o": "output-13a99adfe781464802ff6c2233bc5680"
+    }
+}
