@@ -2,28 +2,15 @@
 #include <list>
 #include <vector>
 #include <cstdlib>
- #include <math.h>
+#include <math.h>
+#include "SparseMatrix.h"
 using namespace std;
 
-class SparseMatrix{
-
-
-private:
-
-	struct node{
-		double value; 
-		int pos;
-	};
-	std::vector<std::list<node> > m;
-	int size;
-
-public:
-
-	//Constructor 
-	SparseMatrix(std::vector<std::vector<int> > a) {
-	    for(int i = 0; i< a.size(); i++){
+	
+	SparseMatrix::SparseMatrix(std::vector<std::vector<double> > a, int dim) {
+	    for(int i = 0; i< dim; i++){
 	        std::list<node>row;
-	        for(int j=0; j< a.size(); j++){
+	        for(int j=0; j< dim+1; j++){
 	            if(!isZero(a[i][j])){
 	            	node * n = new node;
 	            	n->value = a[i][j];
@@ -33,7 +20,7 @@ public:
 	        }
 	        m.push_back(row);
 	    }
-	    size = a.size();
+	    size = dim;
 
 	}
 
@@ -42,16 +29,16 @@ public:
 	// 	cout << "borro";
 
 	// }
-	int getSize(){
+	int SparseMatrix::getSize(){
 	    return size;
 	}
 
 	//Imprime la matriz
-	void show(){
+	void SparseMatrix::show(){
 
 		for(int i = 0; i< size; i++){
 	        list<node>::iterator row = m[i].begin();
-	        for(int j=0; j< size; j++){
+	        for(int j=0; j< size+1; j++){
 
 	            if(row->pos == j){
 	            	cout << ' ' << row->value;
@@ -64,20 +51,10 @@ public:
 	      cout << endl;
 	    }
 	    cout << endl;
-		// vector< list<node> >::iterator row;
-		// list<node>::iterator col;
-		// for (row = m.begin(); row != m.end(); row++) {
-		//     for (col = row->begin(); col != row->end(); col++) {
-		//            cout << ' ' << col->value;
-		//     }
-		//     cout << endl;
-
-		// }
-	 //    cout << endl;
 	}
 
 	//Multiplica la matriz por un escalar (k*A, k un real) 
-	void scalarMult(double a){
+	void SparseMatrix::scalarMult(double a){
 		vector< list<node> >::iterator row;
 		list<node>::iterator col;
 		for (row = m.begin(); row != m.end(); row++) {
@@ -88,7 +65,7 @@ public:
 	}
 
 	//Multiplica la fila row de m por el escalar a 
-	void ScalarRowMult(double a, int row){
+	void SparseMatrix::ScalarRowMult(double a, int row){
 		list<node>::iterator itRow;
 		for (itRow = m[row].begin(); itRow != m[row].end(); itRow++)
 			itRow->value = itRow->value * a ;
@@ -96,11 +73,25 @@ public:
 	}
 
 	//Resta fila lowerRow - m*pivotRow
-	int getFirst(int row){
+	int SparseMatrix::getFirstPos(int row){
+		return m[row].front().pos;
+	}
+
+	double SparseMatrix::getFirstVal(int row){
 		return m[row].front().value;
 	}
 
-	void rowSub(int pivotRow, int lowerRow, double k){
+	double SparseMatrix::getLastVal(int row){
+		return m[row].back().value;
+	}
+	int SparseMatrix::getLastPos(int row){
+		return m[row].back().pos;
+	}
+
+
+
+
+	void SparseMatrix::rowSub(int pivotRow, int lowerRow, double k){
 
 		//se copia la fila
 		list<node> lpivotRow = m[pivotRow];
@@ -140,62 +131,91 @@ public:
  
 	}
 
-	bool isZero(double k){
+
+	void SparseMatrix::backward_substitution(double r[]){
+		for (int i = size - 1; i >= 0; i--){
+			if(getLastPos(i)!= size)
+				r[i] = 0;
+			else
+				r[i] = getLastVal(i);	
+			
+			list<node>::iterator it = m[i].end();
+			--it;
+			while(it->pos != i){
+				r[i] -= it->value * r[it->pos];
+				--it;
+			}
+			
+			r[i] = r[i] / it->value;
+		}
+	}
+
+	void SparseMatrix::eg(double r[]){
+		for(int k = 0; k < size - 1; k++)
+			for(int i = k + 1; i < size; i++)
+					if(getFirstPos(i) == k){
+						double m = getFirstVal(i) / getFirstVal(k);
+						rowSub(k,i,m);
+					}			
+		backward_substitution(r);
+	}
+	
+
+	bool SparseMatrix::isZero(double k){
 		return (fabs(k) <= 1.0e-5);	
 
 	}
 	
 
-};
 
 
-int main()
-{	
+// int main()
+// {	
 	
-	int a [3][3];
-	a[0][0] = 1;
-	a[0][1] = 0;
-	a[0][2] = 1;
-	a[1][0] = 3;
-	a[1][1] = 0;
-	a[1][2] = 0;
-	a[2][0] = 5;
-	a[2][1] = 0;
-	a[2][2] = 0;
-	vector< vector<int> > matrix;
-	cout << "Filling matrix with test numbers.";
-	matrix.resize(3);  
-	for (int i = 0; i < 3; i++)
-	{
-	    matrix[i].resize(3);  
-	    for (int j = 0; j < 3; j++)
-	    {
-	        matrix[i][j] = a[i][j];  
-	    }
-	}
+// 	int a [3][3];
+// 	a[0][0] = 1;
+// 	a[0][1] = 0;
+// 	a[0][2] = 1;
+// 	a[1][0] = 3;
+// 	a[1][1] = 0;
+// 	a[1][2] = 0;
+// 	a[2][0] = 5;
+// 	a[2][1] = 0;
+// 	a[2][2] = 0;
+// 	vector< vector<int> > matrix;
+// 	cout << "Filling matrix with test numbers.";
+// 	matrix.resize(3);  
+// 	for (int i = 0; i < 3; i++)
+// 	{
+// 	    matrix[i].resize(3);  
+// 	    for (int j = 0; j < 3; j++)
+// 	    {
+// 	        matrix[i][j] = a[i][j];  
+// 	    }
+// 	}
 	
-	SparseMatrix m = SparseMatrix(matrix);
+// 	SparseMatrix m = SparseMatrix(matrix);
 
-    std::cout << "mylist contains:"<<endl;
-    m.show();
-   /* m.scalarMult(2);
-  	m.show();
-  	m.ScalarRowMult(2,1);
-  	m.show();
-  	m.ScalarRowMult(2,0);
-    m.show();
-    m.rowSub(0,1,3);
-    m.show();
-    m.scalarMult(3);
-  	m.show();
-	*/
-	m.rowSub(0,1,3);
-	m.show();
-	m.rowSub(0,2,5);
-	m.show();
-	float c = float(5) / float(3);
-	m.rowSub(1,2,c);
-	m.show();
-    return 0;
+//     std::cout << "mylist contains:"<<endl;
+//     m.show();
+//    /* m.scalarMult(2);
+//   	m.show();
+//   	m.ScalarRowMult(2,1);
+//   	m.show();
+//   	m.ScalarRowMult(2,0);
+//     m.show();
+//     m.rowSub(0,1,3);
+//     m.show();
+//     m.scalarMult(3);
+//   	m.show();
+// 	*/
+// 	m.rowSub(0,1,3);
+// 	m.show();
+// 	m.rowSub(0,2,5);
+// 	m.show();
+// 	float c = float(5) / float(3);
+// 	m.rowSub(1,2,c);
+// 	m.show();
+//     return 0;
 
-}
+// }

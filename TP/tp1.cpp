@@ -5,7 +5,7 @@
 #include <vector>
 #include <cmath>
 #include "tiempo.h"
-//#include "SparseMatrix.h"
+#include "SparseMatrix.h"
 using namespace std;
 
 int equipos; // La declaro global para poder usarla en las demas funciones
@@ -174,70 +174,77 @@ int main (int args, char* argsv[]) {
 	else
 		iteraciones = 1;
 
-	unsigned long long start, end, res;
-	unsigned long long resultados[iteraciones];
-	for (int k = 0; k < iteraciones; k++){
-		MEDIR_TIEMPO_START(start)
-		if (modo == 0)
-			eg(matriz, r);
-		else if (modo == 1)
-			cl(matriz, r);
-		else
-			wp(total, r);
-		MEDIR_TIEMPO_END(end)
-		resultados[k] = end - start;
-		res += end - start;
-	}
-	if (iteraciones > 1){
-		const float z_90 = 1.282;
-		const float z_10 = -1.282;
-		double media, varianza, sd, sumatoria, x_90, x_10;
-		media = res / iteraciones;
-		for (int i = 0; i < iteraciones; i++)
-			sumatoria += (resultados[i] - media) * (resultados[i] - media);
-		varianza = sumatoria / (double) iteraciones;
-		sd = sqrt(varianza);
-		x_90 = media + z_90 * sd;
-		x_10 = media + z_10 * sd;
-		int h = 0;
-		// cuento la cant de elementos a remover
-		for (int j = 0; j < iteraciones; j++) {
-			if (resultados[j] > x_90 || resultados[j] < x_10)
-				h++;
-		}
-		int n = iteraciones - h;
-		unsigned long long mediciones[n];
-		res = 0;
-		for (int j = 0; j < iteraciones; j++){
-			if (!(resultados[j] >  x_90) || !(resultados[j] < x_10)){
-				mediciones[j] = resultados[j];
-				res += mediciones[j];
-			}
-		}
-		media = res / n;
-		string file_name = "medicion." + to_string(equipos) + ".txt";
-		ofstream medicion;
-		medicion.open(file_name);
-		medicion << "------------------------------------------------------\n";
-		medicion << "Promedio: " << media << "\n";
-		medicion << "Desviacion standar: " << sd << "\n";
-		medicion << "#Iteraciones: " << iteraciones << "\n";
-		medicion << "#Elem. removidos: " << h << "\n";
-		medicion.close();
-	}
+	SparseMatrix rala = SparseMatrix(matriz,equipos);
+	rala.show();
+	rala.eg(r);
+	rala.show();
 
-	// Los arreglos se pasan como punteros, r contiene el resultado
+
+	// unsigned long long start, end, res;
+	// unsigned long long resultados[iteraciones];
+	// for (int k = 0; k < iteraciones; k++){
+	// 	MEDIR_TIEMPO_START(start)
+	// 	if (modo == 0)
+	 		eg(matriz, r);
+	// 	else if (modo == 1)
+	// 		cl(matriz, r);
+	// 	else
+	// 		wp(total, r);
+	// 	MEDIR_TIEMPO_STOP(end)
+	// 	resultados[k] = end - start;
+	// 	res += end - start;
+	// }
+
+	// if (iteraciones > 1){
+	// 	const float z_90 = 1.282;
+	// 	const float z_10 = -1.282;
+	// 	double media, varianza, sd, sumatoria, x_90, x_10;
+	// 	media = res / iteraciones;
+	// 	for (int i = 0; i < iteraciones; i++)
+	// 		sumatoria += (resultados[i] - media) * (resultados[i] - media);
+	// 	varianza = sumatoria / (double) iteraciones;
+	// 	sd = sqrt(varianza);
+	// 	x_90 = media + z_90 * sd;
+	// 	x_10 = media + z_10 * sd;
+	// 	int h = 0;
+	// 	// cuento la cant de elementos a remover
+	// 	for (int j = 0; j < iteraciones; j++) {
+	// 		if (resultados[j] > x_90 || resultados[j] < x_10)
+	// 			h++;
+	// 	}
+	// 	int n = iteraciones - h;
+	// 	unsigned long long mediciones[n];
+	// 	res = 0;
+	// 	for (int j = 0; j < iteraciones; j++){
+	// 		if (!(resultados[j] >  x_90) || !(resultados[j] < x_10)){
+	// 			mediciones[j] = resultados[j];
+	// 			res += mediciones[j];
+	// 		}
+	// 	}
+	// 	media = res / n;
+	// 	string file_name = "medicion." + to_string(equipos) + ".txt";
+	// 	ofstream medicion;
+	// 	medicion.open(file_name);
+	// 	medicion << "------------------------------------------------------\n";
+	// 	medicion << "Promedio: " << media << "\n";
+	// 	medicion << "Desviacion standar: " << sd << "\n";
+	// 	medicion << "#Iteraciones: " << iteraciones << "\n";
+	// 	medicion << "#Elem. removidos: " << h << "\n";
+	// 	medicion.close();
+	// }
+
+	// // Los arreglos se pasan como punteros, r contiene el resultado
 	ofstream salida;
 	salida.open(argsv[2]);
-	// Se respeta el orden de los equipos en el archivo de salida
-	for (int j = 0; j < equipos; j++)
-		salida << r[j] << "\n";
+	// // Se respeta el orden de los equipos en el archivo de salida
+	 for (int j = 0; j < equipos; j++)
+	 	salida << r[j] << "\n";
 	salida.close();
 
-	if (modo != 2)
+	// if (modo != 2)
 	 	imprimir(matriz);
 
-	cout << "Cant. de ticks " << tiempo << "\n";
+	//cout << "Cant. de ticks " << tiempo << "\n";
 
 	return 0;
 }
