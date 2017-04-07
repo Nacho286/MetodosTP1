@@ -42,6 +42,7 @@ public:
 
 	void eg(double r[]);
 	void cl();
+	void solve_cl(double r[]);
 	void backward_substitution(double r[]);
 	void forward_substitution(double r[]);
 

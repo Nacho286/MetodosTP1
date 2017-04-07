@@ -194,9 +194,15 @@ using namespace std;
 	}
 	
 	void SparseMatrix::cl(){
-			
+		list<node>::iterator it = m[0].begin();
+		double m =pow(it->value,1.0/2.0);
+		it->value=m;
+		
 	}
 	
+	void SparseMatrix::solve_cl(double r[]){
+		
+	}
 
 	bool SparseMatrix::isZero(double k){
 		return (fabs(k) <= 1.0e-7);	

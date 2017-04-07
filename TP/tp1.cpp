@@ -86,6 +86,19 @@ void solve_cl(vector< vector<double> > &matriz, double r[]){
 	backward_substitution(matriz,r);
 }
 
+void solve_cl(vector< vector<double> > &matriz, double r[],vector< vector<double>> bs){
+	for(vector<double> b: bs){
+		for(int i=0;i<equipos;i++){
+			matriz[i][equipos]=b[i];
+		}
+		forward_substitution(matriz,r);
+		for(int i=0;i<equipos;i++){
+			matriz[i][equipos]=r[i];
+		}
+		backward_substitution(matriz,r);
+	}
+}
+
 void wp(double total[], double r[]){
 	//Win Percentage
 	// r_i tiene la cant. de partidos ganados del equipo i

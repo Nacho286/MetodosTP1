@@ -1,0 +1,18 @@
+Experimentacion cuantitativa(Graficos:)
+
+-Variando tamaño de la matriz
+	Cholesky:
+		-SparseMatrix
+		-vector
+	Gauss:
+		-SparseMatrix
+		-Vector
+
+-Cambiando el b, fijo los valores de la matriz: 
+	Cholesky(alguna representacion)
+	Gauss(alguna representacion)
+
+-Moviendo la densidad y fijando un tamaño
+	Cholesky(SparseMatrix)
+	Gauss(SparseMatrix)
+
