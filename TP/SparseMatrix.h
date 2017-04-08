@@ -22,6 +22,8 @@ private:
 	
 	int rowSize; 
 	int colSize;
+	double dotProduct(int i, int j, double diagonal);
+
 public:
 
 	SparseMatrix(vector<vector<double> > a, int rowSize, int colSize);
@@ -45,7 +47,8 @@ public:
 	void solve_cl(double r[]);
 	void backward_substitution(double r[]);
 	void forward_substitution(double r[]);
-	list<node>::iterator SparseMatrix::dotProduct(int row i, int row j)
+
+
 
 };
 

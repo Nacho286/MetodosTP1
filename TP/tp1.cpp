@@ -248,18 +248,22 @@ int main (int args, char* argsv[]) {
 	else
 		iteraciones = 1;
 
-	SparseMatrix rala = SparseMatrix(matriz, equipos,equipos+1);
-	//rala.show();
-
+	cout << "Rala:"<<endl;
+	SparseMatrix rala = SparseMatrix(matriz, equipos,equipos);
+	rala.show();
+	rala.cl();
+	rala.show();
+	
 	unsigned long long start, end, res;
 	unsigned long long resultados[iteraciones];
 	for (int k = 0; k < iteraciones; k++){
 		MEDIR_TIEMPO_START(start)
-		if (modo == 0)
-			rala.eg(r);		// eg(matriz, r);
+		if (modo == 0){
+			rala.eg(r);		
+		}
 		else if (modo == 1){
 			cl(matriz);
-			solve_cl(matriz,r);
+			//solve_cl(matriz,r);
 		}
 		else
 			wp(total, r);
@@ -279,8 +283,9 @@ int main (int args, char* argsv[]) {
 	 	salida << r[j] << "\n";
 	salida.close();
 
+	cout << "Comun:"<<endl;
 	//if (modo != 2)
-	// 	imprimir(matriz);
+	 	imprimir(matriz);
 
 	return 0;
 }

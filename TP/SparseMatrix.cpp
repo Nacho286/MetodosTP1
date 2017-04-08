@@ -193,56 +193,54 @@ using namespace std;
 	}
 	
 
-	// void cl(vector< vector<double> > &matriz){
-	// //Cholesky
-	// matriz[0][0]=pow(matriz[0][0],1.0/2.0);
-	// for(int i=1;i<equipos;i++){
- //        matriz[i][0]=matriz[i][0]/matriz[0][0];
-	// }
-	// for(int i=1;i<equipos-1;i++){
- //        for(int j=0;j<i;j++){
- //            matriz[i][i]-=pow(matriz[i][j],2);
-
- //        }
- //        matriz[i][i]=pow(matriz[i][i],1.0/2.0);
- //        for(int j=i+1;j<equipos;j++){
- //            for(int k=0;k<i;k++){
- //                matriz[j][i]-=(matriz[j][k]*matriz[i][k]);
- //            }
- //            matriz[j][i]=matriz[j][i]/matriz[i][i];
- //        }
-	// }
-	// for(int i=0;i<equipos-1;i++){
- //        matriz[equipos-1][equipos-1]-=pow(matriz[equipos-1][i],2);
-	// }
-	// matriz[equipos-1][equipos-1]=pow(matriz[equipos-1][equipos-1],1.0/2.0);
-	// for(int i=0;i<equipos;i++){
-	// 	for(int j=0;j<equipos;j++){
-	// 		matriz[i][j]=matriz[j][i];
-	// 	}
-	// }
-	// }
 	void SparseMatrix::cl(){
-		 for(int j=1;j<rowSize;j++){
-		 	double sum = 0;
-		 	list<node>::iterator itRow;
-		 	for (itRow = m[j].begin(); itRow != --(m[j].end()); itRow++)
-		 		sum += pow(itRow->value,2);
-		 	itRow->value = itRow->value - sum;
+		 for(int j=0;j<rowSize;j++){
+		 	double diagonal = dotProduct(j,j,1);
 		 	for(int i = j+1; i<rowSize;i++)
-		 		sum = dotProduct(i,j);	 
-
+		 		dotProduct(i,j,diagonal);	
 		 }
 	}
 	
-	SparseMatrix::node SparseMatrix::dotProduct(int row i, int row j){
 
-		
+	double  SparseMatrix::dotProduct(int i, int j, double diagonal){
+		list<node>::iterator itRowi = m[i].begin();
+		list<node>::iterator itRowj = m[j].begin();
+		double sum = 0;
+		while(itRowi != m[i].end() && itRowj != m[j].end() && itRowi->pos <= j-1 ){
+			if (itRowi->pos == itRowj->pos){
+				sum = sum+ itRowi->value* itRowj->value;
+				++itRowj;
+				++itRowi;	
+			} 
+			else if (itRowi->pos > itRowj->pos)
+        		++itRowj;
+        	else
+        		++itRowi;
+		}
 
+		while(itRowi != m[i].end() && itRowi->pos <= j-1)
+			++itRowi;
+
+		if( itRowi != m[i].end() && itRowi->pos == j){
+			sum = itRowi->value -sum;
+			if(j==i)
+				itRowi->value = pow(sum,1.0/2.0);
+			else
+				itRowi->value = sum / diagonal;
+			return itRowi->value;
+		}
+		else{
+			node n = node();
+			if(i==j)
+				n.value = pow((-1*sum),1.0/2.0);
+			else
+	        	n.value = (-1*sum)/diagonal;
+	        n.pos = j;
+			m[i].insert(itRowi,n);
+			return n.value;
+		}
 	}
-	void SparseMatrix::solve_cl(double r[]){
-		
-	}
+
 
 	bool SparseMatrix::isZero(double k){
 		return (fabs(k) <= 1.0e-7);	
