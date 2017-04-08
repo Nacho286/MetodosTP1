@@ -248,7 +248,7 @@ int main (int args, char* argsv[]) {
 	else
 		iteraciones = 1;
 
-	SparseMatrix rala = SparseMatrix(matriz, equipos);
+	SparseMatrix rala = SparseMatrix(matriz, equipos,equipos+1);
 	//rala.show();
 
 	unsigned long long start, end, res;

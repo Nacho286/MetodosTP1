@@ -7,12 +7,12 @@
 using namespace std;
 
 	
-	SparseMatrix::SparseMatrix(vector<vector<double> > a, int dim){
+	SparseMatrix::SparseMatrix(vector<vector<double> > a, int rowDim, int colDim){
 	   
 	
-	    for(int i = 0; i < dim; i++){
+	    for(int i = 0; i < rowDim; i++){
 	        list<node> row;
-	        for(int j = 0; j < dim + 1; j++){
+	        for(int j = 0; j < colDim; j++){
 	            if(!isZero(a[i][j])){
 	            	// node *n = new node;
 	            	// n->value = a[i][j];
@@ -26,7 +26,8 @@ using namespace std;
 	        }
 	        m.push_back(row);
 	    }
-	    size = dim;
+	    rowSize = rowDim;
+	    colSize	= colDim;
 	}
 
 	// SparseMatrix::~SparseMatrix(){
@@ -40,16 +41,14 @@ using namespace std;
 	// 	}
 	// }
 
-	int SparseMatrix::getSize(){
-	    return size;
-	}
+
 
 	//Imprime la matriz
 	void SparseMatrix::show(){
 
-		for(int i = 0; i < size; i++){
+		for(int i = 0; i < rowSize; i++){
 	        list<node>::iterator row = m[i].begin();
-	        for(int j = 0; j < size + 1; j++){
+	        for(int j = 0; j < colSize; j++){
 	            if(row->pos == j){
 	            	cout << ' ' << row->value;
 	            	++row;
@@ -148,8 +147,8 @@ using namespace std;
 	}
 
 	void SparseMatrix::backward_substitution(double r[]){
-		for (int i = size - 1; i >= 0; i--){
-			if(getLastPos(i)!= size)
+		for (int i = rowSize - 1; i >= 0; i--){
+			if(getLastPos(i)!= rowSize)
 				r[i] = 0;
 			else
 				r[i] = getLastVal(i);	
@@ -166,8 +165,8 @@ using namespace std;
 	}
 	
 	void SparseMatrix::forward_substitution(double r[]){
-		for (int i = 0; i < size ; i++){
-			if(getLastPos(i)!= size)
+		for (int i = 0; i < rowSize ; i++){
+			if(getLastPos(i)!= rowSize)
 				r[i] = 0;
 			else
 				r[i] = getLastVal(i);	
@@ -184,8 +183,8 @@ using namespace std;
 	}
 
 	void SparseMatrix::eg(double r[]){
-		for(int k = 0; k < size - 1; k++)
-			for(int i = k + 1; i < size; i++)
+		for(int k = 0; k < rowSize - 1; k++)
+			for(int i = k + 1; i < rowSize; i++)
 					if(getFirstPos(i) == k){
 						double m = getFirstVal(i) / getFirstVal(k);
 						rowSub(k,i,m);
@@ -193,13 +192,54 @@ using namespace std;
 		backward_substitution(r);
 	}
 	
+
+	// void cl(vector< vector<double> > &matriz){
+	// //Cholesky
+	// matriz[0][0]=pow(matriz[0][0],1.0/2.0);
+	// for(int i=1;i<equipos;i++){
+ //        matriz[i][0]=matriz[i][0]/matriz[0][0];
+	// }
+	// for(int i=1;i<equipos-1;i++){
+ //        for(int j=0;j<i;j++){
+ //            matriz[i][i]-=pow(matriz[i][j],2);
+
+ //        }
+ //        matriz[i][i]=pow(matriz[i][i],1.0/2.0);
+ //        for(int j=i+1;j<equipos;j++){
+ //            for(int k=0;k<i;k++){
+ //                matriz[j][i]-=(matriz[j][k]*matriz[i][k]);
+ //            }
+ //            matriz[j][i]=matriz[j][i]/matriz[i][i];
+ //        }
+	// }
+	// for(int i=0;i<equipos-1;i++){
+ //        matriz[equipos-1][equipos-1]-=pow(matriz[equipos-1][i],2);
+	// }
+	// matriz[equipos-1][equipos-1]=pow(matriz[equipos-1][equipos-1],1.0/2.0);
+	// for(int i=0;i<equipos;i++){
+	// 	for(int j=0;j<equipos;j++){
+	// 		matriz[i][j]=matriz[j][i];
+	// 	}
+	// }
+	// }
 	void SparseMatrix::cl(){
-		list<node>::iterator it = m[0].begin();
-		double m =pow(it->value,1.0/2.0);
-		it->value=m;
-		
+		 for(int j=1;j<rowSize;j++){
+		 	double sum = 0;
+		 	list<node>::iterator itRow;
+		 	for (itRow = m[j].begin(); itRow != --(m[j].end()); itRow++)
+		 		sum += pow(itRow->value,2);
+		 	itRow->value = itRow->value - sum;
+		 	for(int i = j+1; i<rowSize;i++)
+		 		sum = dotProduct(i,j);	 
+
+		 }
 	}
 	
+	SparseMatrix::node SparseMatrix::dotProduct(int row i, int row j){
+
+		
+
+	}
 	void SparseMatrix::solve_cl(double r[]){
 		
 	}

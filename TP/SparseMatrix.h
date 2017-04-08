@@ -20,11 +20,11 @@ private:
 
 	vector<list<node> > m;
 	
-	int size; // sin tener en cuenta la columna del b
-
+	int rowSize; 
+	int colSize;
 public:
 
-	SparseMatrix(vector<vector<double> > a, int dim);
+	SparseMatrix(vector<vector<double> > a, int rowSize, int colSize);
 	//~SparseMatrix(void);
 
 	void show();
@@ -45,6 +45,7 @@ public:
 	void solve_cl(double r[]);
 	void backward_substitution(double r[]);
 	void forward_substitution(double r[]);
+	list<node>::iterator SparseMatrix::dotProduct(int row i, int row j)
 
 };
 
