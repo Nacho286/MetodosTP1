@@ -28,7 +28,7 @@ for f in files:
 
 plt.xlabel('Cantidad de equipos');
 plt.ylabel('Tiempo promedio de duracion del progama');
-plt.title('Tiempo promedio de duracion del progama en funcion de la cantidad de equipos');
+plt.title('Duracion promedio del progama en funcion de la cantidad de equipos');
 keys= eg.keys();
 keys.sort;
 plotPromedio=[];
@@ -51,5 +51,6 @@ for i in keys:
 plt.plot(keys,plotPromedio,label='pw');
 print maxEquipos;
 print maxPromedio;
+plt.legend(bbox_to_anchor=(1.09,0.8));
 #plt.axis([0,maxEquipos,0,maxPromedio]);
 plt.show();
