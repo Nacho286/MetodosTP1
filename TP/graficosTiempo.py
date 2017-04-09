@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import os
 import matplotlib.pyplot as plt
 
@@ -14,7 +15,7 @@ for f in files:
 	promedio= float(archivo.readline().split(':')[1]);
 	nombre=f.split('.');	
 	modo=nombre[1];
-	equipos=nombre[2];
+	equipos=int(nombre[2])	;
 	if(maxEquipos<equipos):
 		maxEquipos=equipos;
 	if(maxPromedio<promedio):
@@ -28,23 +29,27 @@ for f in files:
 
 plt.xlabel('Cantidad de equipos');
 plt.ylabel('Tiempo promedio de duracion del progama');
-plt.title('Duracion promedio del progama en funcion de la cantidad de equipos');
+plt.title('Duracion promedio del progama en funcion de la cantidad de equipos(mseg)');
 keys= eg.keys();
-keys.sort;
+keys.sort();
+print keys;
 plotPromedio=[];
-for i in keys:
+for i in keys:	
 	plotPromedio.append(eg[i]);
 plt.plot(keys,plotPromedio,label='Eliminacion gaussiana');
 
 keys= cl.keys();
-keys.sort;
+keys.sort();
 plotPromedio=[];
+print keys;
 for i in keys:
+	
 	plotPromedio.append(cl[i]);
 plt.plot(keys,plotPromedio,label='Cholesky');
 
 keys= pw.keys();
-keys.sort;
+keys.sort();
+print keys;
 plotPromedio=[];
 for i in keys:
 	plotPromedio.append(pw[i]);
@@ -52,5 +57,5 @@ plt.plot(keys,plotPromedio,label='pw');
 print maxEquipos;
 print maxPromedio;
 plt.legend(bbox_to_anchor=(1.09,0.8));
-#plt.axis([0,maxEquipos,0,maxPromedio]);
+plt.axis([0,maxEquipos,0,maxPromedio]);
 plt.show();

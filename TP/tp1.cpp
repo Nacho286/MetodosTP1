@@ -280,12 +280,12 @@ int main (int args, char* argsv[]) {
 	
 	cout << "Rala:"<<endl;
 	SparseMatrix rala = SparseMatrix(matriz, equipos,equipos);
-	rala.show();
+	//rala.show();
 	SparseMatrix lt = rala.cl();
 	cout << "L:"<<endl;
-	rala.show();
+	//rala.show();
 	cout << "Lt:"<<endl;
-	lt.show();
+	//lt.show();
 	rala.forward_substitution_cl(b);
 	lt.backward_substitution_cl(b);
 
@@ -300,7 +300,8 @@ int main (int args, char* argsv[]) {
 	for (int k = 0; k < iteraciones; k++){
 		MEDIR_TIEMPO_START(start)
 		if (modo == 0){
-			rala.eg(r);		
+			//rala.eg(r);		
+			eg(matriz,r);		
 		}
 		else if (modo == 1){
 			cl(matriz);
