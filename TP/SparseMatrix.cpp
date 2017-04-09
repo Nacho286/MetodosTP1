@@ -7,6 +7,7 @@
 using namespace std;
 
 	
+	
 	SparseMatrix::SparseMatrix(vector<vector<double> > a, int rowDim, int colDim){
 	   
 	
@@ -28,6 +29,14 @@ using namespace std;
 	    }
 	    rowSize = rowDim;
 	    colSize	= colDim;
+	}
+
+	SparseMatrix::SparseMatrix(int rowDim, int colDim){
+		for(int i = 0; i< rowDim;i++)
+		m.push_back(list<node>());
+		rowSize = rowDim;
+	    colSize	= colDim;
+
 	}
 
 	// SparseMatrix::~SparseMatrix(){
@@ -163,14 +172,26 @@ using namespace std;
 			r[i] = r[i] / it->value;
 		}
 	}
-	
-	void SparseMatrix::forward_substitution(double r[]){
-		for (int i = 0; i < rowSize ; i++){
-			if(getLastPos(i)!= rowSize)
-				r[i] = 0;
-			else
-				r[i] = getLastVal(i);	
+
+	void SparseMatrix::backward_substitution_cl(double r[]){
+
+		cout << "de";
+		for (int i = rowSize - 1; i >= 0; i--){
 			
+			list<node>::iterator it = m[i].end();
+	
+			while(it->pos != i){
+				r[i] -= it->value * r[it->pos];
+				--it;
+			}
+			
+			r[i] = r[i] / it->value;
+		}
+	}
+	
+	void SparseMatrix::forward_substitution_cl(double r[]){
+		for (int i = 0; i < rowSize ; i++){			
+	
 			list<node>::iterator it = m[i].begin();
 			
 			while(it->pos != i){
@@ -193,14 +214,24 @@ using namespace std;
 	}
 	
 
-	void SparseMatrix::cl(){
+	SparseMatrix& SparseMatrix::cl(){
+		SparseMatrix *lTrans =  new SparseMatrix(rowSize,colSize);
 		 for(int j=0;j<rowSize;j++){
 		 	double diagonal = dotProduct(j,j,1);
-		 	for(int i = j+1; i<rowSize;i++)
-		 		dotProduct(i,j,diagonal);	
+		 	node n = {diagonal,j}; 
+		 	lTrans->addtoRow(j,n);
+		 	for(int i = j+1; i<rowSize;i++){
+		 		double val = dotProduct(i,j,diagonal);	
+		 		node n2 = {val,i};
+		 		lTrans->addtoRow(j,n2); 		
+		 	}
 		 }
+		 return *lTrans;
 	}
 	
+	void SparseMatrix::addtoRow(int row, node& n){
+		m[row].push_back(n);
+	}
 
 	double  SparseMatrix::dotProduct(int i, int j, double diagonal){
 		list<node>::iterator itRowi = m[i].begin();
@@ -220,13 +251,15 @@ using namespace std;
 
 		while(itRowi != m[i].end() && itRowi->pos <= j-1)
 			++itRowi;
-
-		if( itRowi != m[i].end() && itRowi->pos == j){
+	
+		if(itRowi != m[i].end() && itRowi->pos == j){
 			sum = itRowi->value -sum;
+			double val;
 			if(j==i)
-				itRowi->value = pow(sum,1.0/2.0);
+				val = pow(sum,1.0/2.0);
 			else
-				itRowi->value = sum / diagonal;
+				val = sum / diagonal;
+			itRowi->value = val;
 			return itRowi->value;
 		}
 		else{
@@ -239,7 +272,10 @@ using namespace std;
 			m[i].insert(itRowi,n);
 			return n.value;
 		}
+	
 	}
+
+
 
 
 	bool SparseMatrix::isZero(double k){

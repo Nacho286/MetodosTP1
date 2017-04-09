@@ -99,6 +99,15 @@ void solve_cl(vector< vector<double> > &matriz, double r[],vector< vector<double
 	}
 }
 
+void solve_cl(SparseMatrix &l, SparseMatrix &lt, double r[]){
+	cout << "daa";
+		l.forward_substitution_cl(r);
+
+		lt.backward_substitution_cl(r);
+
+}
+
+
 void wp(double total[], double r[]){
 	//Win Percentage
 	// r_i tiene la cant. de partidos ganados del equipo i
@@ -248,11 +257,23 @@ int main (int args, char* argsv[]) {
 	else
 		iteraciones = 1;
 
+	double b[equipos];
+	for(int i  = 0;i< equipos;i++){
+		b[i] = matriz[i][equipos];
+	}
+
 	cout << "Rala:"<<endl;
 	SparseMatrix rala = SparseMatrix(matriz, equipos,equipos);
 	rala.show();
-	rala.cl();
+	SparseMatrix lt = rala.cl();
+	cout << "L:"<<endl;
 	rala.show();
+	cout << "Lt:"<<endl;
+	lt.show();
+	cout << "asd";
+	rala.backward_substitution_cl(r);
+	//solve_cl(rala,lt,b);	
+
 	
 	unsigned long long start, end, res;
 	unsigned long long resultados[iteraciones];
@@ -262,7 +283,7 @@ int main (int args, char* argsv[]) {
 			rala.eg(r);		
 		}
 		else if (modo == 1){
-			cl(matriz);
+			//cl(matriz);
 			//solve_cl(matriz,r);
 		}
 		else
@@ -285,7 +306,7 @@ int main (int args, char* argsv[]) {
 
 	cout << "Comun:"<<endl;
 	//if (modo != 2)
-	 	imprimir(matriz);
+	 //	imprimir(matriz);
 
 	return 0;
 }

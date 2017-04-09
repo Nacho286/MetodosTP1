@@ -27,6 +27,7 @@ private:
 public:
 
 	SparseMatrix(vector<vector<double> > a, int rowSize, int colSize);
+	SparseMatrix(int rowDim, int colDim);
 	//~SparseMatrix(void);
 
 	void show();
@@ -39,14 +40,17 @@ public:
 	int getLastPos(int row);
 	double getFirstVal(int row);
 	double getLastVal(int row);
+	void addtoRow(int row, node& n);
 
 	bool isZero(double k);
 
 	void eg(double r[]);
-	void cl();
+	SparseMatrix& cl();
 	void solve_cl(double r[]);
 	void backward_substitution(double r[]);
-	void forward_substitution(double r[]);
+	void backward_substitution_cl(double r[]);
+	void forward_substitution_cl(double r[]);
+
 
 
 
