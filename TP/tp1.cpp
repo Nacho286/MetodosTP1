@@ -142,7 +142,19 @@ vector<string> split(const string &s, char delim) {
     return elems;
 }
 
-void procesar_mediciones(unsigned long long resultados[], unsigned long long res, int iteraciones){
+void procesar_mediciones(unsigned long long resultados[], unsigned long long res, int iteraciones,int modo){
+	
+	string m="";
+	if (modo == 0){
+		m="eg";		
+	}
+	else if (modo == 1){
+		m="cl";
+	}
+	else
+		m="wp";
+ 	
+
 	const float z_90 = 1.282;
 	const float z_10 = -1.282;
 	double media, varianza, sd, sumatoria, x_90, x_10;
@@ -169,7 +181,7 @@ void procesar_mediciones(unsigned long long resultados[], unsigned long long res
 		}
 	}
 	media = res / n;
-	string file_name = "medicion." + to_string(equipos) + ".txt";
+	string file_name = "medicion."+m+"."+ to_string(equipos) + ".txt";
 	ofstream medicion;
 	medicion.open(file_name, ios::out | ios::app);
 	medicion << "------------------------------------------------------\n";
@@ -301,8 +313,8 @@ int main (int args, char* argsv[]) {
 		res += end - start;
 	}
 	
-	if (iteraciones > 1)
-		procesar_mediciones(resultados, res, iteraciones);
+	if (iteraciones >= 1)
+		procesar_mediciones(resultados, res, iteraciones,modo);
 
 	// Los arreglos se pasan como punteros, r contiene el resultado
 	ofstream salida;
