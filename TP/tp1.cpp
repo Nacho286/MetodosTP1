@@ -100,7 +100,7 @@ void solve_cl(vector< vector<double> > &matriz, double r[],vector< vector<double
 }
 
 void solve_cl(SparseMatrix &l, SparseMatrix &lt, double r[]){
-	cout << "daa";
+	
 		l.forward_substitution_cl(r);
 
 		lt.backward_substitution_cl(r);
@@ -257,11 +257,15 @@ int main (int args, char* argsv[]) {
 	else
 		iteraciones = 1;
 
+	
+
+
+	//creacion de matriz rala y resolucion del sistema con un b
 	double b[equipos];
 	for(int i  = 0;i< equipos;i++){
 		b[i] = matriz[i][equipos];
 	}
-
+	
 	cout << "Rala:"<<endl;
 	SparseMatrix rala = SparseMatrix(matriz, equipos,equipos);
 	rala.show();
@@ -270,9 +274,13 @@ int main (int args, char* argsv[]) {
 	rala.show();
 	cout << "Lt:"<<endl;
 	lt.show();
-	cout << "asd";
-	rala.backward_substitution_cl(r);
-	//solve_cl(rala,lt,b);	
+	rala.forward_substitution_cl(b);
+	lt.backward_substitution_cl(b);
+
+//para mostrrar el b, solo para probar rapido
+	for(int i  = 0;i< equipos;i++){
+		cout << b[i] << endl;
+	}
 
 	
 	unsigned long long start, end, res;
@@ -283,8 +291,8 @@ int main (int args, char* argsv[]) {
 			rala.eg(r);		
 		}
 		else if (modo == 1){
-			//cl(matriz);
-			//solve_cl(matriz,r);
+			cl(matriz);
+			solve_cl(matriz,r);
 		}
 		else
 			wp(total, r);

@@ -175,11 +175,9 @@ using namespace std;
 
 	void SparseMatrix::backward_substitution_cl(double r[]){
 
-		cout << "de";
-		for (int i = rowSize - 1; i >= 0; i--){
-			
+		for (int i = rowSize - 1; i >= 0; i--){		
 			list<node>::iterator it = m[i].end();
-	
+			--it;
 			while(it->pos != i){
 				r[i] -= it->value * r[it->pos];
 				--it;
