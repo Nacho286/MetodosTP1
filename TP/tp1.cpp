@@ -24,10 +24,19 @@ void backward_substitution(vector< vector<double> > &matriz, double r[]){
 	}
 }
 
+void bw_substitution_cl(vector< vector<double> > &matriz, double r[]){
+	for (int i = equipos - 1; i >= 0; i--){
+		//r[i] = matriz[i][equipos];			// r_i = b_i
+		for (int j = equipos - 1; j >= i + 1; j--)
+			r[i] -= matriz[i][j] * r[j];
+		r[i] = r[i] / matriz[i][i];
+	}
+}
+
 //EG: b es la ultima columna de la matriz
 void forward_substitution(vector< vector<double> > &matriz, double r[]){
 	for (int i = 0; i < equipos; i++){
-		r[i] = matriz[i][equipos];			// r_i = b_i
+//		r[i] = matriz[i][equipos];			// r_i = b_i
 		for (int j = 0; j < i ; j++)
 			r[i] -= matriz[i][j] * r[j];
 		r[i] = r[i] / matriz[i][i];
@@ -79,9 +88,7 @@ void cl(vector< vector<double> > &matriz){
 
 void solve_cl(vector< vector<double> > &matriz, double r[]){
 	forward_substitution(matriz, r);
-	for(int i = 0; i < equipos; i++)
-		matriz[i][equipos] = r[i];
-	backward_substitution(matriz, r);
+	bw_substitution_cl(matriz, r);
 }
 
 void solve_cl(SparseMatrix &l, SparseMatrix &lt, double r[]){
