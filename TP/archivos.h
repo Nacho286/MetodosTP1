@@ -29,6 +29,7 @@ namespace archivos{
 
 	vector< vector<double> > armar_matriz_eg(string file){
 		ifstream entrada;
+	
 		entrada.open(file);
 		string cabecera;
 		getline(entrada, cabecera);	// La primera linea contiene la cantidad de equipos y partidos
@@ -45,12 +46,14 @@ namespace archivos{
 					matriz[j][k] = 1.0;
 			}
 		}
-
 		string linea;
 		int i = 0;
+
 		while (i < partidos){
+			
 			getline(entrada, linea);
 			vector<string> resultado = split(linea, ' '); //Formato: fecha e_1 r_1 e_2 r_2
+			
 			int equipo_1    = stoi(resultado[1]);
 			int resultado_1 = stoi(resultado[2]);
 			int equipo_2    = stoi(resultado[3]);
@@ -130,7 +133,7 @@ namespace archivos{
 		vector<string> tamanio = split(cabecera, ' ');
 		int equipos  = stoi(tamanio[0]);
 		int partidos = stoi(tamanio[1]);
-
+	
 		string linea;
 		int i = 0;
 		while(i < partidos){
@@ -148,8 +151,10 @@ namespace archivos{
 
 			total[equipo_1 - 1] += 1.0;
 			total[equipo_2 - 1] += 1.0;
+			i++;
 		}
 		entrada.close();	
+	
 	}
 
 	void obtener_b(string file, double r[]){
