@@ -7,10 +7,7 @@
 using namespace std;
 
 	
-	
-	SparseMatrix::SparseMatrix(vector<vector<double> > a, int rowDim, int colDim){
-	   
-	
+	SparseMatrix::SparseMatrix(vector<vector<double> > a, int rowDim, int colDim){	   
 	    for(int i = 0; i < rowDim; i++){
 	        list<node> row;
 	        for(int j = 0; j < colDim; j++){
@@ -33,10 +30,9 @@ using namespace std;
 
 	SparseMatrix::SparseMatrix(int rowDim, int colDim){
 		for(int i = 0; i< rowDim;i++)
-		m.push_back(list<node>());
+			m.push_back(list<node>());
 		rowSize = rowDim;
 	    colSize	= colDim;
-
 	}
 
 	// SparseMatrix::~SparseMatrix(){
@@ -49,8 +45,6 @@ using namespace std;
 	// 		m[i].clear();
 	// 	}
 	// }
-
-
 
 	//Imprime la matriz
 	void SparseMatrix::show(){
@@ -212,19 +206,19 @@ using namespace std;
 	}
 	
 
-	SparseMatrix& SparseMatrix::cl(){
-		SparseMatrix *lTrans =  new SparseMatrix(rowSize,colSize);
-		 for(int j=0;j<rowSize;j++){
-		 	double diagonal = dotProduct(j,j,1);
-		 	node n = {diagonal,j}; 
-		 	lTrans->addtoRow(j,n);
-		 	for(int i = j+1; i<rowSize;i++){
-		 		double val = dotProduct(i,j,diagonal);	
-		 		node n2 = {val,i};
-		 		lTrans->addtoRow(j,n2); 		
+	SparseMatrix SparseMatrix::cl(){
+		SparseMatrix lTrans = SparseMatrix(rowSize, colSize);
+		 for(int j = 0;j < rowSize; j++){
+		 	double diagonal = dotProduct(j, j, 1);
+		 	node n = {diagonal, j}; 
+		 	lTrans.addtoRow(j, n);
+		 	for(int i = j + 1; i < rowSize; i++){
+		 		double val = dotProduct(i, j, diagonal);	
+		 		node n2 = {val, i};
+		 		lTrans.addtoRow(j, n2); 		
 		 	}
 		 }
-		 return *lTrans;
+		 return lTrans;
 	}
 	
 	void SparseMatrix::addtoRow(int row, node& n){
@@ -273,63 +267,6 @@ using namespace std;
 	
 	}
 
-
-
-
 	bool SparseMatrix::isZero(double k){
 		return (fabs(k) <= 1.0e-7);	
 	}
-	
-
-
-
-// int main()
-// {	
-	
-// 	int a [3][3];
-// 	a[0][0] = 1;
-// 	a[0][1] = 0;
-// 	a[0][2] = 1;
-// 	a[1][0] = 3;
-// 	a[1][1] = 0;
-// 	a[1][2] = 0;
-// 	a[2][0] = 5;
-// 	a[2][1] = 0;
-// 	a[2][2] = 0;
-// 	vector< vector<int> > matrix;
-// 	cout << "Filling matrix with test numbers.";
-// 	matrix.resize(3);  
-// 	for (int i = 0; i < 3; i++)
-// 	{
-// 	    matrix[i].resize(3);  
-// 	    for (int j = 0; j < 3; j++)
-// 	    {
-// 	        matrix[i][j] = a[i][j];  
-// 	    }
-// 	}
-	
-// 	SparseMatrix m = SparseMatrix(matrix);
-
-//     std::cout << "mylist contains:"<<endl;
-//     m.show();
-//    /* m.scalarMult(2);
-//   	m.show();
-//   	m.ScalarRowMult(2,1);
-//   	m.show();
-//   	m.ScalarRowMult(2,0);
-//     m.show();
-//     m.rowSub(0,1,3);
-//     m.show();
-//     m.scalarMult(3);
-//   	m.show();
-// 	*/
-// 	m.rowSub(0,1,3);
-// 	m.show();
-// 	m.rowSub(0,2,5);
-// 	m.show();
-// 	float c = float(5) / float(3);
-// 	m.rowSub(1,2,c);
-// 	m.show();
-//     return 0;
-
-// }

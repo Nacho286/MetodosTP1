@@ -45,14 +45,11 @@ public:
 	bool isZero(double k);
 
 	void eg(double r[]);
-	SparseMatrix& cl();
+	SparseMatrix cl();
 	void solve_cl(double r[]);
 	void backward_substitution(double r[]);
 	void backward_substitution_cl(double r[]);
 	void forward_substitution_cl(double r[]);
-
-
-
 
 };
 
