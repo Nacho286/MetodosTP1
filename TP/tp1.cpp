@@ -7,7 +7,6 @@
 #include "tiempo.h"
 #include "SparseMatrix.h"
 #include "archivos.h"
-using namespace std;
 
 int equipos; // La declaro global para poder usarla en las demas funciones
 
@@ -15,6 +14,7 @@ bool isZero(double value){
 	return (abs(value) <= 1.0e-7);
 }
 
+//EG: b es la ultima columna de la matriz
 void backward_substitution(vector< vector<double> > &matriz, double r[]){
 	for (int i = equipos - 1; i >= 0; i--){
 		r[i] = matriz[i][equipos];			// r_i = b_i
@@ -24,8 +24,9 @@ void backward_substitution(vector< vector<double> > &matriz, double r[]){
 	}
 }
 
+//EG: b es la ultima columna de la matriz
 void forward_substitution(vector< vector<double> > &matriz, double r[]){
-	for (int i =0; i < equipos; i++){
+	for (int i = 0; i < equipos; i++){
 		r[i] = matriz[i][equipos];			// r_i = b_i
 		for (int j = 0; j < i ; j++)
 			r[i] -= matriz[i][j] * r[j];
@@ -83,17 +84,6 @@ void solve_cl(vector< vector<double> > &matriz, double r[]){
 	backward_substitution(matriz, r);
 }
 
-void solve_cl(vector< vector<double> > &matriz, double r[], vector< vector<double>> bs){
-	for(vector<double> b: bs){
-		for(int i = 0; i < equipos; i++)
-			matriz[i][equipos] = b[i];
-		forward_substitution(matriz, r);
-		for(int i = 0; i < equipos; i++)
-			matriz[i][equipos] = r[i];
-		backward_substitution(matriz, r);
-	}
-}
-
 void solve_cl(SparseMatrix &l, SparseMatrix &lt, double r[]){
 		l.forward_substitution_cl(r);
 		lt.backward_substitution_cl(r);
@@ -117,13 +107,64 @@ void imprimir(vector< vector<double> > matriz){
 	}
 }
 
+void procesar_mediciones(unsigned long long resultados[], unsigned long long res, int iteraciones, int b, int modo){
+		const float z_90 = 1.282;
+		const float z_10 = -1.282;
+		double media, varianza, sd, sumatoria, x_90, x_10;
+		media = res / iteraciones;
+		for (int i = 0; i < iteraciones; i++)
+			sumatoria += (resultados[i] - media) * (resultados[i] - media);
+		varianza = sumatoria / (double) iteraciones;
+		sd = sqrt(varianza);
+		x_90 = media + z_90 * sd;
+		x_10 = media + z_10 * sd;
+		int h = 0;
+		// cuento la cant de elementos a remover
+		for (int j = 0; j < iteraciones; j++) {
+			if (resultados[j] > x_90 || resultados[j] < x_10)
+				h++;
+		}
+		int n = iteraciones - h;
+		unsigned long long mediciones[n];
+		res = 0;
+		for (int j = 0; j < iteraciones; j++){
+			if (!(resultados[j] >  x_90) || !(resultados[j] < x_10)){
+				mediciones[j] = resultados[j];
+				res += mediciones[j];
+			}
+		}
+		media = res / n;
+		string metodo;
+		switch (modo){
+			case 0:
+				metodo = "EG";
+				break;
+			case 1:
+				metodo = "CL";
+				break;
+			case 2:
+				metodo = "WP";
+				break;
+		}
+		string file_name = "medicion." + to_string(equipos) + "_" + metodo + ".txt";
+		ofstream medicion;
+		medicion.open(file_name, ios::out | ios::app);
+		medicion << "------------------------------------------------------\n";
+		medicion << "Instancia (b): " << to_string(b) << "\n";
+		medicion << "Promedio: " << media << "\n";
+		medicion << "Desviacion standar: " << sd << "\n";
+		medicion << "#Iteraciones: " << iteraciones << "\n";
+		medicion << "#Elem. removidos: " << h << "\n";
+		medicion.close();
+	}
+
 int main (int args, char* argsv[]) {
 	if (args < 4){
 		cout << "Argumentos inválidos (archivo_entrada archivo_salida 0/1/2)" << "\n";
 		return 1;
 	}
 
-	char modo = stoi(argsv[3]); // 0 EG, 1 CL, 2 WP
+	int modo = stoi(argsv[3]); // 0 EG, 1 CL, 2 WP
 
 	equipos = archivos::cantEquipos(argsv[1]);
 	double r[equipos];
@@ -136,6 +177,7 @@ int main (int args, char* argsv[]) {
 			matriz = archivos::armar_matriz_eg(argsv[1]);
 			break;
 		case 1:
+			// Para CL, uso un arreglo separado para el b
 			matriz.resize(equipos, vector<double>(equipos));
 			matriz = archivos::armar_matriz_cl(argsv[1], r);
 			break;
@@ -175,7 +217,7 @@ int main (int args, char* argsv[]) {
 	double copia_r[equipos];
 	for (int h = 0; h < bs; h++){ 			// Utilizado para medir los tiempos frente a misma matriz con distintos b
 		if (h > 0){
-			string file = "test_" + to_string(equipos) + "_" + to_string(h + 1) ".in";
+			string file = "test_" + to_string(equipos) + "_" + to_string(h + 1) + ".in";
 			if (modo == 0){
 				matriz = archivos::armar_matriz_eg(file);
 				rala = SparseMatrix(matriz, n, m);
@@ -186,18 +228,20 @@ int main (int args, char* argsv[]) {
 		start = 0;
 		end = 0;
 		for (int k = 0; k < iteraciones; k++){
-			if (k == 0)		
-				copia_r = r;
-			r = copia_r;	// Restauro el b original, se modifica en cada iteración
+			if (k == 0)	
+				copy(r, r + equipos, copia_r);	
+			copy(copia_r, copia_r + equipos, r);	// Restauro el b original, se modifica en cada iteración
+			// Habria que hacer lo mismo con la matriz en el caso de EG
 			MEDIR_TIEMPO_START(start)
 			if (modo == 0)
-				rala.eg(r);		
+				eg(matriz, r);
+				//rala.eg(r);		
 			else if (modo == 1){
 				if (h == 0)
-					l_t = rala.cl();
-				solve_cl(rala, l_t, r);
-				//cl(matriz);
-				//solve_cl(matriz, r);
+					cl(matriz);
+					//l_t = rala.cl();
+				//solve_cl(rala, l_t, r);
+				solve_cl(matriz, r);
 			}else
 				wp(total, r);
 			MEDIR_TIEMPO_STOP(end)
@@ -205,7 +249,7 @@ int main (int args, char* argsv[]) {
 			res += end - start;
 		}
 		if (iteraciones > 1)
-			archivos::procesar_mediciones(resultados, res, iteraciones, h + 1, modo);
+			procesar_mediciones(resultados, res, iteraciones, h + 1, modo);
 	}
 
 	// Los arreglos se pasan como punteros, r contiene el resultado
