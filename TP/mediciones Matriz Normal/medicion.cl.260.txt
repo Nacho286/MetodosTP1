@@ -1,5 +1,0 @@
-------------------------------------------------------
-Promedio: 2.40418e+08
-Desviacion standar: 8.74276e+06
-#Iteraciones: 0
-#Elem. removidos: 22
