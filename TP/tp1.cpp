@@ -154,20 +154,18 @@ int main (int args, char* argsv[]) {
 	SparseMatrix l_t  = SparseMatrix(0, 0);			// La instancio ahora porque necesito reutilizarla
 	
 	int bs;
-	if (args > 5) // Hay parametro cant. de b
+	if (args > 5 && modo < 2) // Hay parametro cant. de b
 		bs = stoi(argsv[5]);
 	else
-		bs = 1;
-	// Si el modo es 2, no usar parametro b
-	if (modo == 2)
 		bs = 1;
 
 	unsigned long long start, end, res;
 	unsigned long long resultados[iteraciones];
 
 	double copia_r[equipos];
-	bool primeraIt = true;
 	vector< vector<double> > copia = matriz;
+
+	bool primeraIt = true;					// Para no aplicar Cholesky 100 veces
 
 	char implementacion = 1;				// IMPLEMENTACION: 0 = NORMAL, 1 = SPARSE
 
