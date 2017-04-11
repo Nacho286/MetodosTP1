@@ -191,7 +191,7 @@ namespace archivos{
 		entrada.close();	
 	}
 
-	void procesar_mediciones(unsigned long long resultados[], unsigned long long res, int iteraciones, int equipos, int b, int modo){
+	void procesar_mediciones(unsigned long long resultados[], unsigned long long res, int iteraciones, int equipos, int b, int modo, char implementacion){
 		const float z_90 = 1.282;
 		const float z_10 = -1.282;
 		double media, varianza, sd, sumatoria, x_90, x_10;
@@ -230,7 +230,9 @@ namespace archivos{
 				metodo = "WP";
 				break;
 		}
-		string file_name = "medicion." + to_string(equipos) + "_" + metodo + ".txt";
+		string tipo_matriz;
+		implementacion == 0 ? tipo_matriz = "N" : tipo_matriz = "S";
+		string file_name = "medicion." + to_string(equipos) + "_" + metodo + "_" + tipo_matriz + ".txt";
 		ofstream medicion;
 		medicion.open(file_name, ios::out | ios::app);
 		medicion << "------------------------------------------------------\n";

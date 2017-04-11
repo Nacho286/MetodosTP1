@@ -92,8 +92,11 @@ void wp(double total[], double r[]){
 	//Win Percentage
 	// r_i tiene la cant. de partidos ganados del equipo i
 	// total_i tiene el total de partidos jugados del equipo i
-	for (int i = 0; i < equipos; i++)
+	for (int i = 0; i < equipos; i++){
 		r[i] = r[i] / total[i];
+		if (isZero(r[i]))
+			r[i] = 0.0;
+	}
 }
 
 void imprimir(vector< vector<double> > matriz){
@@ -164,6 +167,10 @@ int main (int args, char* argsv[]) {
 
 	double copia_r[equipos];
 	bool primeraIt = true;
+	vector< vector<double> > copia = matriz;
+
+	char implementacion = 1;				// IMPLEMENTACION: 0 = NORMAL, 1 = SPARSE
+
 	for (int h = 0; h < bs; h++){ 			// Utilizado para medir los tiempos frente a misma matriz con distintos b
 		if (h > 0){
 			string file = "test_" + to_string(equipos) + "_" + to_string(h + 1) + ".in";
@@ -177,10 +184,14 @@ int main (int args, char* argsv[]) {
 		start = 0;
 		end = 0;
 		for (int k = 0; k < iteraciones; k++){
-			if (k == 0)	
-				copy(r, r + equipos, copia_r);	
-			copy(copia_r, copia_r + equipos, r);	// Restauro el b original, se modifica en cada iteración
-			// Habria que hacer lo mismo con la matriz en el caso de EG
+			if (modo == 1){
+				if (k == 0)
+					copy(r, r + equipos, copia_r);	
+				copy(copia_r, copia_r + equipos, r);	// Restauro el b original, se modifica en cada iteración
+			} else if (modo == 0){
+				//matriz = copia;
+				rala = SparseMatrix(copia, n, m);
+			}
 			MEDIR_TIEMPO_START(start)
 			if (modo == 0)
 				//eg(matriz, r);
@@ -199,7 +210,7 @@ int main (int args, char* argsv[]) {
 			primeraIt = false;
 		}
 		if (iteraciones > 1)
-			archivos::procesar_mediciones(resultados, res, iteraciones, equipos, h + 1, modo);
+			archivos::procesar_mediciones(resultados, res, iteraciones, equipos, h + 1, modo, implementacion);
 	}
 
 	// Los arreglos se pasan como punteros, r contiene el resultado
