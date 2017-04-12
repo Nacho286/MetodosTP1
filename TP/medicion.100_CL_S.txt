@@ -1,0 +1,30 @@
+------------------------------------------------------
+Instancia (b): 1
+Promedio: 3.09636e+07
+Desviacion standar: 4.09719e+06
+#Iteraciones: 100
+#Elem. removidos: 9
+------------------------------------------------------
+Instancia (b): 2
+Promedio: 569276
+Desviacion standar: 4.09762e+06
+#Iteraciones: 100
+#Elem. removidos: 0
+------------------------------------------------------
+Instancia (b): 3
+Promedio: 560251
+Desviacion standar: 4.09788e+06
+#Iteraciones: 100
+#Elem. removidos: 0
+------------------------------------------------------
+Instancia (b): 4
+Promedio: 554786
+Desviacion standar: 4.0981e+06
+#Iteraciones: 100
+#Elem. removidos: 0
+------------------------------------------------------
+Instancia (b): 5
+Promedio: 550502
+Desviacion standar: 4.09833e+06
+#Iteraciones: 100
+#Elem. removidos: 0
