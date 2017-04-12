@@ -8,16 +8,16 @@ def generar_Colley(n, m):
 	for i in xrange(n):
 		n_i = 2
 		for j in xrange(n): 	# 3 partidos jugados entre equipos como maximo
-			if(j>i):
+			if(j > i):
 				n_ij = ran.randint(0, 3)
 				colley[i][j] = (-1) * n_ij
 				colley[j][i] = colley[i][j]
 				n_i += n_ij
+				total += n_ij
 			else:
 				n_i += abs(colley[i][j])
 		colley[i][i] = n_i
-		total += n_i - 2
-	print colley
+	#print colley
 	generar_partidos(colley, n, m, total)
 
 def generar_partidos(matriz, n, m, partidos):

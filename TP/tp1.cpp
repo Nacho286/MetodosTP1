@@ -205,10 +205,68 @@ int main (int args, char* argsv[]) {
 			MEDIR_TIEMPO_STOP(end)
 			resultados[k] = end - start;
 			res += end - start;
-			primeraIt = false;
 		}
-		if (iteraciones > 1)
-			archivos::procesar_mediciones(resultados, res, iteraciones, equipos, h + 1, modo, implementacion);
+		primeraIt = false;
+		cout << "-------------------------------------------" << endl;
+		cout << "Instancia (b): " << to_string(h + 1) << endl;
+		cout << "Iteraciones: " << to_string(iteraciones) << endl;
+		cout << "N: " << to_string(equipos) << endl;
+		cout << "Modo: " << to_string(modo) << endl;
+		cout << "Implementacion: " << to_string(implementacion) << endl;
+		cout << "Tiempo: " << to_string(res) << endl;
+
+		if (iteraciones > 1){
+			const float z_90 = 1.282;
+			const float z_10 = -1.282;
+			double media, varianza, sd, sumatoria, x_90, x_10;
+			media = res / iteraciones;
+			for (int i = 0; i < iteraciones; i++)
+				sumatoria += (resultados[i] - media) * (resultados[i] - media);
+			varianza = sumatoria / (double) iteraciones;
+			sd = sqrt(varianza);
+			x_90 = media + z_90 * sd;
+			x_10 = media + z_10 * sd;
+			int i = 0;
+			// cuento la cant de elementos a remover
+			for (int j = 0; j < iteraciones; j++) {
+				if (resultados[j] > x_90 || resultados[j] < x_10)
+					i++;
+			}
+			int n = iteraciones - i;
+			unsigned long long mediciones[n];
+			res = 0;
+			for (int j = 0; j < iteraciones; j++){
+				if (!(resultados[j] >  x_90) || !(resultados[j] < x_10)){
+					mediciones[j] = resultados[j];
+					res += mediciones[j];
+				}
+			}
+			media = res / n;
+			string metodo;
+			switch (modo){
+				case 0:
+					metodo = "EG";
+					break;
+				case 1:
+					metodo = "CL";
+					break;
+				case 2:
+					metodo = "WP";
+					break;
+			}
+			string tipo_matriz;
+			implementacion == 0 ? tipo_matriz = "N" : tipo_matriz = "S";
+			string file_name = "medicion." + to_string(equipos) + "_" + metodo + "_" + tipo_matriz + ".txt";
+			ofstream medicion;
+			medicion.open(file_name, ios::out | ios::app);
+			medicion << "------------------------------------------------------\n";
+			medicion << "Instancia (b): " << to_string(h + 1) << "\n";
+			medicion << "Promedio: " << media << "\n";
+			medicion << "Desviacion standar: " << sd << "\n";
+			medicion << "#Iteraciones: " << iteraciones << "\n";
+			medicion << "#Elem. removidos: " << i << "\n";
+			medicion.close();
+		}
 	}
 
 	// Los arreglos se pasan como punteros, r contiene el resultado
