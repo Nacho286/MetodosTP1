@@ -1,0 +1,12 @@
+------------------------------------------------------
+Instancia (b): 1
+Promedio: 1.72644e+10
+Desviacion standar: 1.66461e+08
+#Iteraciones: 100
+#Elem. removidos: 7
+------------------------------------------------------
+Instancia (b): 2
+Promedio: 1.64162e+10
+Desviacion standar: 2.07904e+08
+#Iteraciones: 100
+#Elem. removidos: 2
