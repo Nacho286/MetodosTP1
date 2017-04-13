@@ -133,7 +133,12 @@ namespace archivos{
 		vector<string> tamanio = split(cabecera, ' ');
 		int equipos  = stoi(tamanio[0]);
 		int partidos = stoi(tamanio[1]);
-	
+
+		for (int p = 0; p < equipos; p++){
+			r[p] = 0.0;
+			total[p] = 0.0;
+		}
+
 		string linea;
 		int i = 0;
 		while(i < partidos){
@@ -143,8 +148,15 @@ namespace archivos{
 			int resultado_1 = stoi(resultado[2]);
 			int equipo_2    = stoi(resultado[3]);
 			int resultado_2 = stoi(resultado[4]);
+			if (equipo_1 == 4 || equipo_2 == 4){
+				cout << "--------------------------" << endl;
+				cout << "Equipo_1: " << equipo_1 << endl;
+				cout << "Equipo_2: " << equipo_2 << endl;
+				cout << "Resultado_1: " << resultado_1 << endl;
+				cout << "Resultado_2: " << resultado_2 << endl;
+			}
 
-			if (resultado_1 >= resultado_2)
+			if (resultado_1 > resultado_2)
 				r[equipo_1 - 1] += 1.0;
 			else
 				r[equipo_2 - 1] += 1.0;
@@ -153,8 +165,9 @@ namespace archivos{
 			total[equipo_2 - 1] += 1.0;
 			i++;
 		}
-		entrada.close();	
-	
+		cout << "GANADOS: " << r[3] << endl;
+		cout << "TOTAL: " << total[3] << endl;
+		entrada.close();		
 	}
 
 	void obtener_b(string file, double r[]){

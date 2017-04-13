@@ -93,6 +93,12 @@ void wp(double total[], double r[]){
 	// r_i tiene la cant. de partidos ganados del equipo i
 	// total_i tiene el total de partidos jugados del equipo i
 	for (int i = 0; i < equipos; i++){
+		if (i == 3){
+		cout << "--------------------------" << endl;
+		cout << "Equipo: " << i << endl;
+		cout << "Ganados: " << r[i] << endl;
+		cout << "Total: " << total[i] << endl;
+		}
 		r[i] = r[i] / total[i];
 		if (isZero(r[i]))
 			r[i] = 0.0;
@@ -167,7 +173,7 @@ int main (int args, char* argsv[]) {
 
 	bool primeraIt = true;					// Para no aplicar Cholesky 100 veces
 
-	char implementacion = 1;				// IMPLEMENTACION: 0 = NORMAL, 1 = SPARSE
+	char implementacion = 0;				// IMPLEMENTACION: 0 = NORMAL, 1 = SPARSE
 
 	for (int h = 0; h < bs; h++){ 			// Utilizado para medir los tiempos frente a misma matriz con distintos b
 		if (h > 0){
@@ -181,25 +187,23 @@ int main (int args, char* argsv[]) {
 		res = 0;
 		start = 0;
 		end = 0;
+		copy(r, r + equipos, copia_r);
 		for (int k = 0; k < iteraciones; k++){
-			if (modo == 1){
-				if (k == 0)
-					copy(r, r + equipos, copia_r);	
-				copy(copia_r, copia_r + equipos, r);	// Restauro el b original, se modifica en cada iteración
-			} else if (modo == 0){
-				//matriz = copia;
-				rala = SparseMatrix(copia, n, m);
-			}
+			copy(copia_r, copia_r + equipos, r);	// Restauro el b original, se modifica en cada iteración
+			if (primeraIt || modo == 0)				// Casos donde es necesario restaurar la matriz original
+				matriz = copia;
+				//rala = SparseMatrix(copia, n, m);
+			
 			MEDIR_TIEMPO_START(start)
 			if (modo == 0)
-				//eg(matriz, r);
-				rala.eg(r);		
+				eg(matriz, r);
+				//rala.eg(r);		
 			else if (modo == 1){
 				if (primeraIt)
-					//cl(matriz);
-					l_t = rala.cl();
-				solve_cl(rala, l_t, r);
-				//solve_cl(matriz, r);
+					cl(matriz);
+					//l_t = rala.cl();
+				//solve_cl(rala, l_t, r);
+				solve_cl(matriz, r);
 			}else
 				wp(total, r);
 			MEDIR_TIEMPO_STOP(end)
@@ -207,13 +211,6 @@ int main (int args, char* argsv[]) {
 			res += end - start;
 		}
 		primeraIt = false;
-		cout << "-------------------------------------------" << endl;
-		cout << "Instancia (b): " << to_string(h + 1) << endl;
-		cout << "Iteraciones: " << to_string(iteraciones) << endl;
-		cout << "N: " << to_string(equipos) << endl;
-		cout << "Modo: " << to_string(modo) << endl;
-		cout << "Implementacion: " << to_string(implementacion) << endl;
-		cout << "Tiempo: " << to_string(res) << endl;
 
 		if (iteraciones > 1){
 			const float z_90 = 1.282;
