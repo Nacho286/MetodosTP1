@@ -148,13 +148,6 @@ namespace archivos{
 			int resultado_1 = stoi(resultado[2]);
 			int equipo_2    = stoi(resultado[3]);
 			int resultado_2 = stoi(resultado[4]);
-			if (equipo_1 == 4 || equipo_2 == 4){
-				cout << "--------------------------" << endl;
-				cout << "Equipo_1: " << equipo_1 << endl;
-				cout << "Equipo_2: " << equipo_2 << endl;
-				cout << "Resultado_1: " << resultado_1 << endl;
-				cout << "Resultado_2: " << resultado_2 << endl;
-			}
 
 			if (resultado_1 > resultado_2)
 				r[equipo_1 - 1] += 1.0;
@@ -165,8 +158,6 @@ namespace archivos{
 			total[equipo_2 - 1] += 1.0;
 			i++;
 		}
-		cout << "GANADOS: " << r[3] << endl;
-		cout << "TOTAL: " << total[3] << endl;
 		entrada.close();		
 	}
 

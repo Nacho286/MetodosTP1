@@ -173,7 +173,7 @@ int main (int args, char* argsv[]) {
 
 	bool primeraIt = true;					// Para no aplicar Cholesky 100 veces
 
-	char implementacion = 0;				// IMPLEMENTACION: 0 = NORMAL, 1 = SPARSE
+	char implementacion = 1;				// IMPLEMENTACION: 0 = NORMAL, 1 = SPARSE
 
 	for (int h = 0; h < bs; h++){ 			// Utilizado para medir los tiempos frente a misma matriz con distintos b
 		if (h > 0){
@@ -191,19 +191,19 @@ int main (int args, char* argsv[]) {
 		for (int k = 0; k < iteraciones; k++){
 			copy(copia_r, copia_r + equipos, r);	// Restauro el b original, se modifica en cada iteración
 			if (primeraIt || modo == 0)				// Casos donde es necesario restaurar la matriz original
-				matriz = copia;
-				//rala = SparseMatrix(copia, n, m);
+				//matriz = copia;
+				rala = SparseMatrix(copia, n, m);
 			
 			MEDIR_TIEMPO_START(start)
 			if (modo == 0)
-				eg(matriz, r);
-				//rala.eg(r);		
+				//eg(matriz, r);
+				rala.eg(r);		
 			else if (modo == 1){
 				if (primeraIt)
-					cl(matriz);
-					//l_t = rala.cl();
-				//solve_cl(rala, l_t, r);
-				solve_cl(matriz, r);
+					//cl(matriz);
+					l_t = rala.cl();
+				solve_cl(rala, l_t, r);
+				//solve_cl(matriz, r);
 			}else
 				wp(total, r);
 			MEDIR_TIEMPO_STOP(end)
