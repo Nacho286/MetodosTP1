@@ -64,15 +64,15 @@ void eg(vector< vector<double> > &matriz, double r[]){
 void cl(vector< vector<double> > &matriz){
 	//Cholesky
 	matriz[0][0] = pow(matriz[0][0], 1.0/2.0);
-	for(int i = 1;i < equipos; i++)
+	for(int i = 1; i < equipos; i++)
         matriz[i][0] = matriz[i][0] / matriz[0][0];
 
-	for(int i = 1;i < equipos - 1; i++){
+	for(int i = 1; i < equipos - 1; i++){
         for(int j = 0; j < i; j++)
             matriz[i][i] -= pow(matriz[i][j], 2);
         matriz[i][i] = pow(matriz[i][i], 1.0/2.0);
 
-        for(int j= i + 1; j < equipos; j++){
+        for(int j = i + 1; j < equipos; j++){
             for(int k = 0; k < i; k++)
                 matriz[j][i] -= (matriz[j][k] * matriz[i][k]);
             matriz[j][i] = matriz[j][i] / matriz[i][i];
@@ -82,7 +82,7 @@ void cl(vector< vector<double> > &matriz){
         matriz[equipos - 1][equipos - 1] -= pow(matriz[equipos - 1][i], 2);
 	matriz[equipos - 1][equipos - 1] = pow(matriz[equipos - 1][equipos - 1], 1.0/2.0);
 
-	for(int i = 0;i < equipos; i++){
+	for(int i = 0; i < equipos; i++){
 		for(int j = 0; j < equipos; j++)
 			matriz[i][j] = matriz[j][i];
 	}
@@ -93,12 +93,6 @@ void wp(double total[], double r[]){
 	// r_i tiene la cant. de partidos ganados del equipo i
 	// total_i tiene el total de partidos jugados del equipo i
 	for (int i = 0; i < equipos; i++){
-		if (i == 3){
-		cout << "--------------------------" << endl;
-		cout << "Equipo: " << i << endl;
-		cout << "Ganados: " << r[i] << endl;
-		cout << "Total: " << total[i] << endl;
-		}
 		r[i] = r[i] / total[i];
 		if (isZero(r[i]))
 			r[i] = 0.0;
